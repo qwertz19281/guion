@@ -4,7 +4,7 @@ use std::hash::Hash;
 
 pub mod standard;
 
-pub trait WidgetID: Clone + PartialEq + Eq + Sized + Hash + 'static {
+pub trait WidgetID: AsRefMut<Self> + Clone + PartialEq + Eq + Sized + Hash + 'static {
     #[inline]
     fn id_eq<I: WidgetID + 'static>(&self, o: &I) -> bool where Self: 'static {
         Any::downcast_ref::<Self>(o)
@@ -12,12 +12,12 @@ pub trait WidgetID: Clone + PartialEq + Eq + Sized + Hash + 'static {
     }
 
     #[inline]
-    fn is_hovered<E: Env<WidgetID=Self>>(&self, c: &E::Context) -> bool where E::Context: CtxStdState<E>, EPressedKey<E>: PressedKey<E> {
-        c.state().is_hovered(self)
+    fn is_hovered<E: Env>(&self, c: &E::Context) -> bool where E::Context: CtxStdState<E>, EPressedKey<E>: PressedKey<E>, Self: AsRefMut<E::WidgetID> {
+        c.state().is_hovered(self.as_ref())
     }
     #[inline]
-    fn is_focused<E: Env<WidgetID=Self>>(&self, c: &E::Context) -> bool where E::Context: CtxStdState<E>, EPressedKey<E>: PressedKey<E> {
-        c.state().is_focused(self)
+    fn is_focused<E: Env>(&self, c: &E::Context) -> bool where E::Context: CtxStdState<E>, EPressedKey<E>: PressedKey<E>, Self: AsRefMut<E::WidgetID> {
+        c.state().is_focused(self.as_ref())
     }
 }
 

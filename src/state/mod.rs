@@ -9,7 +9,7 @@ pub mod dyn_state;
 
 //move StdState trait to sstandard StdState trait. StdState is not a core feature!
 
-pub trait CtxStdState<E>: Context<E> + Sized where E: Env<Context=Self> {
+pub trait CtxStdState<E>: Context<E> + Sized where E: Env, E::Context: AsRefMut<Self> {
     type T: StdState<E>;
     
     fn state_mut(&mut self) -> &mut Self::T;
